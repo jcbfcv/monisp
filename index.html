@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISP Onboarding Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- SheetJS (XLSX) Library for Excel Import -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <style>
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: white;
+            z-index: 10;
+        }
+        thead .sticky-col {
+            background-color: #dbeafe !important;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+
+    <div class="max-w-full mx-auto">
+        <!-- Header Section -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Management Portal</span>
+                <h1 class="text-2xl font-bold text-gray-800 mt-1">MISP Onboarding Details</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Structured overview of associate records and documentation status.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-2 cursor-pointer">
+                    <span>Import Excel</span>
+                    <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelImport(event)">
+                </label>
+                <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-2">
+                    <span>+ Add New Associate</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search & Count Bar -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4 mb-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="w-full sm:w-1/3">
+                <label for="searchBox" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Find a Record</label>
+                <input 
+                    type="text" 
+                    id="searchBox" 
+                    onkeyup="filterTable()" 
+                    placeholder="Search by name, ID, city, PAN..." 
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+            <div class="text-sm text-gray-500 font-medium" id="recordCount">
+                Showing all records
+            </div>
+        </div>
+        
+        <!-- Table Container -->
+        <div class="overflow-x-auto border border-gray-200 shadow-md rounded-xl bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm text-left border-collapse">
+                <thead class="bg-blue-100 text-gray-700 uppercase font-semibold text-xs tracking-wider">
+                    <tr>
+                        <th class="px-4 py-3.5 whitespace-nowrap sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Associate Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Associate ID</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Type</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">MISP ID</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Onboarding Date</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">MISP Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">MISP PAN</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Address</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">State</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">City</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">PIN Code</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">GST No</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">OEM Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Document Recv Date</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">DP Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">DP Contact</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">DP Email</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">DP PAN No</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Date of Birth</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Aadhar Number</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">10th/12th Certificate</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Bank Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Account Number</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">IFSC Code</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">IIB Remarks MISP</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap">Cancelled Cheque</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Photograph</th>
+                        <th class="px-4 py-3 whitespace-nowrap">MISP Registration Form</th>
+                        <th class="px-4 py-3 whitespace-nowrap">IIB Upload</th>
+                        <th class="px-4 py-3 whitespace-nowrap">IIB Upload Date</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Training ID/Password Shared</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Training Start Date</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Training End Date</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Trainings Status</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Training Certificate Number</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Exam Status</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Agreement Copy</th>
+                        <th class="px-4 py-3 whitespace-nowrap text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y divide-gray-200 text-gray-700 bg-white"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add New Associate Modal Form -->
+    <div id="addModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b px-6 py-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">Add New Associate</h3>
+                    <p class="text-xs text-gray-500">Fill out all required details below (Highlighted fields are entry inputs)</p>
+                </div>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1 bg-amber-50/30">
+                <form id="associateForm" onsubmit="event.preventDefault(); submitForm();" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate Name *</label>
+                        <input type="text" name="associate_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate ID</label>
+                        <input type="text" name="associate_id" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Type (Fixed)</label>
+                        <input type="text" name="type" value="misp" readonly class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 outline-none cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP ID</label>
+                        <input id="mispIdInput" type="text" name="misp_id" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <p class="text-[10px] text-gray-500 mt-1">Auto-generated from latest MISP ID.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Onboarding Date</label>
+                        <input type="date" name="onboarding_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Name</label>
+                        <input type="text" name="misp_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP PAN</label>
+                        <input type="text" name="misp_pan" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Format: ABCDE1234F" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Address</label>
+                        <input type="text" name="address" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+
+                    <!-- State Dropdown -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">State *</label>
+                        <select id="stateSelect" name="state" onchange="onStateChange()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="">Select State</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+
+                    <!-- City Dropdown -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">City *</label>
+                        <select id="citySelect" name="city" onchange="onCityChange()" required disabled class="w-full border border-amber-300 bg-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="">Select State First</option>
+                        </select>
+                    </div>
+
+                    <!-- PIN Code -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">PIN Code</label>
+                        <input type="text" id="pinCodeInput" name="pin_code" placeholder="Auto-filled" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">GST No</label>
+                        <input type="text" name="gst_no" placeholder="22AAAAA0000A1Z5" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" title="Format: 22AAAAA0000A1Z5" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">OEM Name</label>
+                        <input type="text" name="oem_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Document Recv Date</label>
+                        <input type="date" name="document_recv_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Name</label>
+                        <input type="text" name="dp_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Contact</label>
+                        <input type="tel" name="dp_contact" placeholder="9876543210" pattern="[6-9][0-9]{9}" maxlength="10" title="Enter a valid 10-digit mobile number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Email</label>
+                        <input type="email" name="dp_email" placeholder="example@domain.com" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN No</label>
+                        <input type="text" name="dp_pan_no" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Format: ABCDE1234F" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Date of Birth</label>
+                        <input type="date" name="date_of_birth" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhar Number</label>
+                        <input type="text" name="aadhar_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+
+                    <!-- 10th/12th Certificate File Upload -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">10th/12th Certificate Upload</label>
+                        <input type="file" name="tenth_twelfth_certificate" accept=".pdf, .jpg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Bank Name</label>
+                        <input type="text" name="bank_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Account Number</label>
+                        <input type="text" name="account_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IFSC Code</label>
+                        <input type="text" name="ifsc_code" placeholder="SBIN0001234" pattern="^[A-Z]{4}0[A-Z0-9]{6}$" title="Format: SBIN0001234" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Remarks MISP</label>
+                        <input type="text" name="iib_remarks_misp" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+
+                    <!-- Status Dropdowns -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Cancelled Cheque</label>
+                        <select name="cancelled_cheque" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Received">Received</option>
+                            <option value="Not Received">Not Received</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Photograph</label>
+                        <select name="photograph" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Received">Received</option>
+                            <option value="Not Received">Not Received</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Registration Form</label>
+                        <input type="text" name="misp_registration_form" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload</label>
+                        <select name="iib_upload" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload Date</label>
+                        <input type="date" name="iib_upload_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+
+                    <!-- Training ID/Password Shared Dropdown -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training ID/Password Shared</label>
+                        <select name="training_id_password_shared" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Start Date</label>
+                        <input type="date" name="training_start_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training End Date</label>
+                        <input type="date" name="training_end_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Trainings Status</label>
+                        <select name="trainings_status" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Completed">Completed</option>
+                            <option value="TC Pending">TC Pending</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Certificate Number</label>
+                        <input type="text" name="training_certificate_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Exam Status</label>
+                        <select name="exam_status" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Agreement Copy</label>
+                        <select name="agreement_copy" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Received">Received</option>
+                            <option value="Not Received">Not Received</option>
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">Cancel</button>
+                <button type="button" onclick="submitForm()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Save Associate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details View Modal -->
+    <div id="detailModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Associate Complete Details</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            <div id="modalContent" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeModal()" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Supabase Initialization
+        const SUPABASE_URL = 'https://trywwodevwizligqsdhf.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyeXd3b2RldndpemxpZ3FzZGhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3ODkwNzMsImV4cCI6MjEwMDM2NTA3M30.H7QFlWAx3b02DrG3LNhVdb0jBjdu3JYoo7EhIP-HOMQ';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let associatesData = [];
+
+        // Fetch Data from Supabase Database on Page Load
+        async function fetchAssociates() {
+            const { data, error } = await supabaseClient
+                .from('misp_associates')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching data:', error);
+                return;
+            }
+
+            associatesData = data || [];
+            renderTable(associatesData);
+        }
+
+        const locationData = {
+            "Andhra Pradesh": { "Visakhapatnam": "530001", "Vijayawada": "520001", "Guntur": "522001", "Tirupati": "517501" },
+            "Arunachal Pradesh": { "Itanagar": "791111", "Tawang": "790104", "Naharlagun": "791110" },
+            "Assam": { "Guwahati": "781001", "Silchar": "788001", "Dibrugarh": "786001", "Jorhat": "785001" },
+            "Bihar": { "Patna": "800001", "Gaya": "823001", "Muzaffarpur": "842001", "Bhagalpur": "812001" },
+            "Chhattisgarh": { "Raipur": "492001", "Bhilai": "490001", "Bilaspur": "495001", "Korba": "495677" },
+            "Goa": { "Panaji": "403001", "Margao": "403601", "Vasco da Gama": "403802" },
+            "Gujarat": { "Ahmedabad": "380001", "Surat": "395001", "Vadodara": "390001", "Rajkot": "360001" },
+            "Haryana": { "Gurugram": "122001", "Faridabad": "121001", "Panipat": "132103", "Ambala": "133001" },
+            "Himachal Pradesh": { "Shimla": "171001", "Manali": "175131", "Dharamshala": "176215" },
+            "Jharkhand": { "Ranchi": "834001", "Jamshedpur": "831001", "Dhanbad": "826001", "Bokaro": "827001" },
+            "Karnataka": { "Bengaluru": "560001", "Mysuru": "570001", "Hubballi": "580020", "Mangaluru": "575001" },
+            "Kerala": { "Thiruvananthapuram": "695001", "Kochi": "682001", "Kozhikode": "673001", "Thrissur": "680001" },
+            "Madhya Pradesh": { "Jabalpur": "482001", "Bhopal": "462001", "Indore": "452001", "Gwalior": "474001", "Ujjain": "456001", "Sagar": "470001" },
+            "Maharashtra": { "Mumbai": "400001", "Pune": "411001", "Nagpur": "440001", "Nashik": "422001", "Thane": "400601" },
+            "Manipur": { "Imphal": "795001", "Thoubal": "795138" },
+            "Meghalaya": { "Shillong": "793001", "Tura": "794001" },
+            "Mizoram": { "Aizawl": "796001", "Lunglei": "796701" },
+            "Nagaland": { "Kohima": "797001", "Dimapur": "797112" },
+            "Odisha": { "Bhubaneswar": "751001", "Cuttack": "753001", "Rourkela": "769001", "Puri": "752001" },
+            "Punjab": { "Ludhiana": "141001", "Amritsar": "143001", "Jalandhar": "144001", "Chandigarh": "160017" },
+            "Rajasthan": { "Jaipur": "302021", "Jodhpur": "342001", "Udaipur": "313001", "Kota": "324001", "Ajmer": "305001" },
+            "Sikkim": { "Gangtok": "737101", "Namchi": "737126" },
+            "Tamil Nadu": { "Chennai": "600001", "Coimbatore": "641001", "Madurai": "625001", "Tiruchirappalli": "620001" },
+            "Telangana": { "Hyderabad": "500001", "Warangal": "506002", "Nizamabad": "503001" },
+            "Tripura": { "Agartala": "799001", "Udaipur": "799120" },
+            "Uttar Pradesh": { "Lucknow": "226001", "Kanpur": "208001", "Varanasi": "221001", "Agra": "282001", "Prayagraj": "211001" },
+            "Uttarakhand": { "Dehradun": "248001", "Haridwar": "249401", "Nainital": "263001", "Haldwani": "263139" },
+            "West Bengal": { "Kolkata": "700001", "Howrah": "711101", "Siliguri": "734001", "Durgapur": "713201" }
+        };
+
+        const allowedAssociateFields = new Set([
+            'associate_name', 'associate_id', 'type', 'misp_id', 'onboarding_date', 'misp_name', 'misp_pan',
+            'address', 'state', 'city', 'pin_code', 'gst_no', 'oem_name', 'document_recv_date', 'dp_name',
+            'dp_contact', 'dp_email', 'dp_pan_no', 'date_of_birth', 'aadhar_number', 'tenth_twelfth_certificate',
+            'bank_name', 'account_number', 'ifsc_code', 'iib_remarks_misp', 'cancelled_cheque', 'photograph',
+            'misp_registration_form', 'iib_upload', 'iib_upload_date', 'training_id_password_shared',
+            'training_start_date', 'training_end_date', 'trainings_status', 'training_certificate_number',
+            'exam_status', 'agreement_copy'
+        ]);
+
+        const headerKeyMap = {
+            '10th_12th_certificate': 'tenth_twelfth_certificate',
+            '10th_12th_certificate_upload': 'tenth_twelfth_certificate'
+        };
+
+        function normalizeHeader(header) {
+            return header
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, ' and ')
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '');
+        }
+
+        function onStateChange() {
+            const stateSelect = document.getElementById('stateSelect');
+            const citySelect = document.getElementById('citySelect');
+            const pinCodeInput = document.getElementById('pinCodeInput');
+            
+            const selectedState = stateSelect.value;
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            pinCodeInput.value = '';
+
+            if (selectedState && locationData[selectedState]) {
+                citySelect.disabled = false;
+                citySelect.classList.remove('bg-gray-100');
+                citySelect.classList.add('bg-amber-50/50');
+
+                for (const city in locationData[selectedState]) {
+                    const opt = document.createElement('option');
+                    opt.value = city;
+                    opt.textContent = city;
+                    citySelect.appendChild(opt);
+                }
+            } else {
+                citySelect.disabled = true;
+                citySelect.classList.add('bg-gray-100');
+                citySelect.classList.remove('bg-amber-50/50');
+            }
+        }
+
+        function onCityChange() {
+            const stateSelect = document.getElementById('stateSelect').value;
+            const citySelect = document.getElementById('citySelect').value;
+            const pinCodeInput = document.getElementById('pinCodeInput');
+
+            if (stateSelect && locationData[stateSelect] && locationData[stateSelect][citySelect]) {
+                pinCodeInput.value = locationData[stateSelect][citySelect];
+            } else {
+                pinCodeInput.value = '';
+            }
+        }
+
+        async function getLatestMispId() {
+            const { data, error } = await supabaseClient
+                .from('misp_associates')
+                .select('misp_id')
+                .order('id', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Error fetching latest MISP ID:', error);
+                return null;
+            }
+
+            return data?.misp_id || null;
+        }
+
+        function buildNextMispId(latestMispId) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const defaultPrefix = 'sib';
+            const defaultSequence = '0001';
+
+            if (!latestMispId) {
+                return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
+            }
+
+            const match = latestMispId.match(/^(.*\/)(\d{4})\/(\d{2})\/(\d+)$/);
+            if (!match) {
+                return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
+            }
+
+            const prefix = match[1].replace(/\/$/, '');
+            const latestYear = match[2];
+            const latestMonth = match[3];
+            const latestSequence = parseInt(match[4], 10);
+            const nextSequence = String(latestSequence + 1).padStart(4, '0');
+
+            if (String(latestYear) === String(year) && latestMonth === month) {
+                return `${prefix}/${year}/${month}/${nextSequence}`;
+            }
+
+            return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
+        }
+
+        async function fillNextMispId() {
+            const nextId = buildNextMispId(await getLatestMispId());
+            const mispIdInput = document.getElementById('mispIdInput');
+            if (mispIdInput) {
+                mispIdInput.value = nextId;
+            }
+        }
+
+        function renderTable(data) {
+            const tableBody = document.getElementById('table-body');
+            const recordCount = document.getElementById('recordCount');
+            tableBody.innerHTML = '';
+
+            recordCount.innerText = `Showing ${data.length} record(s)`;
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="38" class="text-center py-8 text-gray-400 font-medium">No matching records found</td></tr>`;
+                return;
+            }
+
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-blue-50/50 transition-colors';
+                
+                tr.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap font-semibold text-gray-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${row.associate_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.associate_id || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap"><span class="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-md text-xs uppercase font-medium">${row.type || '-'}</span></td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.misp_id || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.onboarding_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.misp_name}">${row.misp_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.misp_pan || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.address}">${row.address || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.state || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.city || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.pin_code || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.gst_no || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.oem_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.document_recv_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.dp_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.dp_contact || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.dp_email || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.dp_pan_no || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.date_of_birth || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">[Aadhaar Redacted]</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.tenth_twelfth_certificate || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.bank_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.account_number || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.ifsc_code || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.iib_remarks_misp}">${row.iib_remarks_misp || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.cancelled_cheque || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.photograph || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.misp_registration_form || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.iib_upload || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.iib_upload_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.training_id_password_shared || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.training_start_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.training_end_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.trainings_status || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.training_certificate_number || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.exam_status || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.agreement_copy || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-center">
+                        <button onclick="viewDetails(${index})" class="text-indigo-600 hover:text-indigo-800 font-medium text-xs bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-md transition mr-1">View Full</button>
+                        <button onclick="deleteRow(${index})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-md transition">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Modal Open/Close Controls
+        async function openAddModal() {
+            const modal = document.getElementById('addModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            await fillNextMispId();
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('addModal');
+            if (modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        }
+
+        // Save Form Data Directly to Supabase
+        async function submitForm() {
+            const form = document.getElementById('associateForm');
+            const formData = new FormData(form);
+            const newRecord = {};
+
+            formData.forEach((value, key) => {
+                if (key === 'tenth_twelfth_certificate' && value && value.name) {
+                    newRecord[key] = value.name; 
+                } else {
+                    if ((key.includes('date') || key === 'date_of_birth') && value === '') {
+                        newRecord[key] = null;
+                    } else {
+                        // Uppercase formatting for PAN, GST, and IFSC fields
+                        if (['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(key) && value) {
+                            newRecord[key] = value.trim().toUpperCase();
+                        } else {
+                            newRecord[key] = value;
+                        }
+                    }
+                }
+            });
+
+            newRecord.type = "misp";
+
+            if (!newRecord.associate_name) {
+                alert("Please enter Associate Name");
+                return;
+            }
+
+            let result;
+            const hasMispId = newRecord.misp_id && String(newRecord.misp_id).trim() !== '';
+
+            if (hasMispId) {
+                const { data: existingRow, error: fetchError } = await supabaseClient
+                    .from('misp_associates')
+                    .select('id')
+                    .eq('misp_id', newRecord.misp_id)
+                    .maybeSingle();
+
+                if (fetchError) {
+                    console.error('Error checking existing MISP ID:', fetchError);
+                    alert('Error saving associate: ' + fetchError.message);
+                    return;
+                }
+
+                if (existingRow && existingRow.id) {
+                    result = await supabaseClient
+                        .from('misp_associates')
+                        .update(newRecord)
+                        .eq('misp_id', newRecord.misp_id)
+                        .select();
+                } else {
+                    result = await supabaseClient
+                        .from('misp_associates')
+                        .insert([newRecord])
+                        .select();
+                }
+            } else {
+                result = await supabaseClient
+                    .from('misp_associates')
+                    .insert([newRecord])
+                    .select();
+            }
+
+            const { data, error } = result;
+            if (error) {
+                console.error('Error saving record:', error);
+                if (error.message && error.message.includes('duplicate key value violates unique constraint')) {
+                    alert('Error saving associate: This unique field already exists. Please check MISP ID, Associate ID, Contact, or Email.');
+                } else {
+                    alert('Error saving associate: ' + error.message);
+                }
+                return;
+            }
+
+            alert('Associate successfully saved to database!');
+            form.reset();
+            
+            document.getElementById('citySelect').disabled = true;
+            document.getElementById('citySelect').innerHTML = '<option value="">Select State First</option>';
+            
+            closeAddModal();
+            fetchAssociates();
+        }
+
+        function viewDetails(index) {
+            const row = associatesData[index];
+            const modalContent = document.getElementById('modalContent');
+            document.getElementById('modalTitle').innerText = `Details for: ${row.associate_name || 'Associate'}`;
+            modalContent.innerHTML = '';
+
+            for (const [key, value] of Object.entries(row)) {
+                if (key === 'id' || key === 'created_at') continue;
+                const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+                modalContent.innerHTML += `
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide">${formattedKey}</span>
+                        <span class="text-sm font-medium text-gray-800 mt-0.5 block break-words">${value || '-'}</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('detailModal').classList.remove('hidden');
+            document.getElementById('detailModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('flex');
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const filteredData = associatesData.filter(row => {
+                return Object.values(row).some(val => 
+                    String(val).toLowerCase().includes(query)
+                );
+            });
+            renderTable(filteredData);
+        }
+
+        async function deleteRow(index) {
+            const row = associatesData[index];
+            if (!row || !row.id) return;
+
+            if (!confirm(`Are you sure you want to delete ${row.associate_name}?`)) return;
+
+            const { error } = await supabaseClient
+                .from('misp_associates')
+                .delete()
+                .eq('id', row.id);
+
+            if (error) {
+                console.error('Error deleting record:', error);
+                alert('Failed to delete record.');
+                return;
+            }
+
+            fetchAssociates();
+        }
+
+        // Excel Import and Automatic Upsert Sync Feature
+        async function handleExcelImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    const workbookData = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(workbookData, { type: 'array', cellDates: true });
+                    
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
+
+                    if (rawJsonData.length === 0) {
+                        alert("Excel file is empty!");
+                        return;
+                    }
+
+                    function formatDateValue(value) {
+                        if (value === null || value === undefined || value === '') {
+                            return null;
+                        }
+                        if (value instanceof Date) {
+                            return value.toISOString().slice(0, 10);
+                        }
+                        if (typeof value === 'number') {
+                            const parsed = XLSX.SSF.parse_date_code(value);
+                            if (!parsed) return null;
+                            return `${parsed.y}-${String(parsed.m).padStart(2, '0')}-${String(parsed.d).padStart(2, '0')}`;
+                        }
+                        const normalized = String(value).trim();
+                        const parsedTime = Date.parse(normalized);
+                        return isNaN(parsedTime) ? null : new Date(parsedTime).toISOString().slice(0, 10);
+                    }
+
+                    const formattedData = rawJsonData.map(row => {
+                        const newRow = {};
+
+                        allowedAssociateFields.forEach(field => {
+                            newRow[field] = null;
+                        });
+
+                        for (let header in row) {
+                            const normalizedHeader = normalizeHeader(header);
+                            const targetKey = headerKeyMap[normalizedHeader] || normalizedHeader;
+                            if (!allowedAssociateFields.has(targetKey)) {
+                                continue;
+                            }
+
+                            let value = row[header];
+                            if (value === '') {
+                                value = null;
+                            }
+
+                            if (value !== null && (targetKey.includes('date') || targetKey === 'date_of_birth')) {
+                                value = formatDateValue(value);
+                            }
+
+                            if (value !== null && ['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(targetKey)) {
+                                value = String(value).trim().toUpperCase();
+                            }
+
+                            newRow[targetKey] = value;
+                        }
+
+                        newRow.type = 'misp';
+                        return newRow;
+                    });
+
+                    // Upsert operation based on associate_id
+                    const { data, error } = await supabaseClient
+                        .from('misp_associates')
+                        .upsert(formattedData, { onConflict: 'associate_id' })
+                        .select();
+
+                    if (error) {
+                        console.error('Error importing Excel data:', error);
+                        alert('Import failed: ' + error.message);
+                        return;
+                    }
+
+                    alert(`Successfully imported and synced ${formattedData.length} records!`);
+                    fetchAssociates();
+                    event.target.value = '';
+
+                } catch (err) {
+                    console.error('Excel parsing error:', err);
+                    alert('Failed to read Excel file. Please check the file format.');
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Initial Data Load from Supabase on Startup
+        fetchAssociates();
+    </script>
+</body>
+</html>
