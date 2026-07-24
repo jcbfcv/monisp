@@ -28,9 +28,8 @@
         <!-- Header Section -->
         <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Management Portal</span>
                 <h1 class="text-2xl font-bold text-gray-800 mt-1">MISP Onboarding Details</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Structured overview of associate records and documentation status.</p>
+                <p class="text-sm text-gray-500 mt-0.5">Structured overview of MISP records and documentation status.</p>
             </div>
             
             <div class="flex items-center gap-3">
@@ -39,7 +38,7 @@
                     <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelImport(event)">
                 </label>
                 <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-2">
-                    <span>+ Add New Associate</span>
+                    <span>+ Add New MISP</span>
                 </button>
             </div>
         </div>
@@ -84,14 +83,14 @@
                         <th class="px-4 py-3.5 whitespace-nowrap">DP Contact</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">DP Email</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">DP PAN No</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">Date of Birth</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">Aadhar Number</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">10th/12th Certificate</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">Bank Name</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">Account Number</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">IFSC Code</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">IIB Remarks MISP</th>
-                        <th class="px-4 py-3.5 whitespace-nowrap">Cancelled Cheque</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Date of Birth</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Aadhar Number</th>
+                        <th class="px-4 py-3 whitespace-nowrap">10th/12th Certificate</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Bank Name</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Account Number</th>
+                        <th class="px-4 py-3 whitespace-nowrap">IFSC Code</th>
+                        <th class="px-4 py-3 whitespace-nowrap">IIB Remarks MISP</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Cancelled Cheque</th>
                         <th class="px-4 py-3 whitespace-nowrap">Photograph</th>
                         <th class="px-4 py-3 whitespace-nowrap">MISP Registration Form</th>
                         <th class="px-4 py-3 whitespace-nowrap">IIB Upload</th>
@@ -111,52 +110,94 @@
         </div>
     </div>
 
-    <!-- Add New Associate Modal Form -->
+    <!-- Excel Validation Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b px-6 py-4 bg-gray-50 rounded-t-2xl">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">Excel Data Staging & Validation Preview</h3>
+                    <p class="text-xs text-gray-500">Review validation conflicts, edit records, or delete invalid rows before importing.</p>
+                </div>
+                <button onclick="closePreviewModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1">
+                <div id="previewSummary" class="mb-4 text-sm font-semibold"></div>
+                <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200 text-xs text-left">
+                        <thead class="bg-gray-100 uppercase font-semibold text-gray-700">
+                            <tr>
+                                <th class="px-3 py-2.5">Row #</th>
+                                <th class="px-3 py-2.5">Associate Name</th>
+                                <th class="px-3 py-2.5">Associate ID</th>
+                                <th class="px-3 py-2.5">MISP ID</th>
+                                <th class="px-3 py-2.5">Onboarding Date</th>
+                                <th class="px-3 py-2.5">Validation Status & Errors</th>
+                                <th class="px-3 py-2.5 text-center">Staging Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-table-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closePreviewModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">Cancel</button>
+                <button type="button" id="confirmImportBtn" onclick="confirmAndImportData()" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">Proceed & Import Valid Rows</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add / Edit Associate Modal Form -->
     <div id="addModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b px-6 py-4">
                 <div>
-                    <h3 class="text-xl font-bold text-gray-800">Add New Associate</h3>
-                    <p class="text-xs text-gray-500">Fill out all required details below (Highlighted fields are entry inputs)</p>
+                    <h3 class="text-xl font-bold text-gray-800" id="formModalTitle">Add New MISP</h3>
+                    <p class="text-xs text-gray-500">Fill out all required details below</p>
                 </div>
                 <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
             </div>
             
             <div class="p-6 overflow-y-auto flex-1 bg-amber-50/30">
                 <form id="associateForm" onsubmit="event.preventDefault(); submitForm();" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <input type="hidden" id="editRecordId" value="">
+                    <input type="hidden" id="stagedIndexInput" value="">
                     
                     <div>
                         <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate Name *</label>
-                        <input type="text" name="associate_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <select id="associate_name_select" name="associate_name" onchange="onAssociateNameChange()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="">Select Associate Name</option>
+                        </select>
+                    </div>
+                   
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate ID *</label>
+                        <input type="text" id="associate_id" name="associate_id" readonly required class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-600 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate ID</label>
-                        <input type="text" name="associate_id" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Type *</label>
+                        <input type="text" name="type" value="MISP" readonly class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Type (Fixed)</label>
-                        <input type="text" name="type" value="misp" readonly class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 outline-none cursor-not-allowed">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP ID *</label>
+                        <input id="mispIdInput" type="text" name="misp_id" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP ID</label>
-                        <input id="mispIdInput" type="text" name="misp_id" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                        <p class="text-[10px] text-gray-500 mt-1">Auto-generated from latest MISP ID.</p>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Onboarding Date *</label>
+                        <input type="date" id="onboarding_date_input" name="onboarding_date" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Onboarding Date</label>
-                        <input type="date" name="onboarding_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Name *</label>
+                        <input type="text" id="misp_name_input" name="misp_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Name</label>
-                        <input type="text" name="misp_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP PAN *</label>
+                        <input type="text" id="misp_pan_input" name="misp_pan" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP PAN</label>
-                        <input type="text" name="misp_pan" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Format: ABCDE1234F" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Address</label>
-                        <input type="text" name="address" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Address *</label>
+                        <input type="text" id="address_input" name="address" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
 
                     <!-- State Dropdown -->
@@ -205,142 +246,160 @@
 
                     <!-- PIN Code -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">PIN Code</label>
-                        <input type="text" id="pinCodeInput" name="pin_code" placeholder="Auto-filled" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-amber-500">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">PIN Code *</label>
+                        <input type="text" id="pinCodeInput" name="pin_code" placeholder="Auto-filled" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">GST No</label>
-                        <input type="text" name="gst_no" placeholder="22AAAAA0000A1Z5" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" title="Format: 22AAAAA0000A1Z5" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">GST No *</label>
+                        <input type="text" id="gst_no_input" name="gst_no" placeholder="22AAAAA0000A1Z5" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">OEM Name</label>
-                        <input type="text" name="oem_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Document Recv Date</label>
-                        <input type="date" name="document_recv_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Name</label>
-                        <input type="text" name="dp_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Contact</label>
-                        <input type="tel" name="dp_contact" placeholder="9876543210" pattern="[6-9][0-9]{9}" maxlength="10" title="Enter a valid 10-digit mobile number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Email</label>
-                        <input type="email" name="dp_email" placeholder="example@domain.com" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN No</label>
-                        <input type="text" name="dp_pan_no" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Format: ABCDE1234F" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Date of Birth</label>
-                        <input type="date" name="date_of_birth" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhar Number</label>
-                        <input type="text" name="aadhar_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-
-                    <!-- 10th/12th Certificate File Upload -->
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">10th/12th Certificate Upload</label>
-                        <input type="file" name="tenth_twelfth_certificate" accept=".pdf, .jpg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Bank Name</label>
-                        <input type="text" name="bank_name" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Account Number</label>
-                        <input type="text" name="account_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IFSC Code</label>
-                        <input type="text" name="ifsc_code" placeholder="SBIN0001234" pattern="^[A-Z]{4}0[A-Z0-9]{6}$" title="Format: SBIN0001234" style="text-transform: uppercase;" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Remarks MISP</label>
-                        <input type="text" name="iib_remarks_misp" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-
-                    <!-- Status Dropdowns -->
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Cancelled Cheque</label>
-                        <select name="cancelled_cheque" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Received">Received</option>
-                            <option value="Not Received">Not Received</option>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">OEM Name *</label>
+                        <select id="oem_name_input" name="oem_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="">Select OEM</option>
+                            <option value="Maruti Suzuki">Maruti Suzuki</option>
+                            <option value="Tata Motors">Tata Motors</option>
+                            <option value="Mahindra & Mahindra">Mahindra & Mahindra</option>
+                            <option value="Hyundai Motor Company">Hyundai Motor Company</option>
+                            <option value="Toyota Motor Corporation">Toyota Motor Corporation</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Photograph</label>
-                        <select name="photograph" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Received">Received</option>
-                            <option value="Not Received">Not Received</option>
-                        </select>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Document Recv Date *</label>
+                        <input type="date" id="document_recv_date_input" name="document_recv_date" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Registration Form</label>
-                        <input type="text" name="misp_registration_form" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Name *</label>
+                        <input type="text" id="dp_name_input" name="dp_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload</label>
-                        <select name="iib_upload" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Contact *</label>
+                        <input type="tel" id="dp_contact_input" name="dp_contact" placeholder="9876543210" maxlength="10" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload Date</label>
-                        <input type="date" name="iib_upload_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Email *</label>
+                        <input type="email" id="dp_email_input" name="dp_email" placeholder="example@domain.com" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
-
-                    <!-- Training ID/Password Shared Dropdown -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training ID/Password Shared</label>
-                        <select name="training_id_password_shared" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN No *</label>
+                        <input type="text" id="dp_pan_no_input" name="dp_pan_no" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN Upload</label>
+                        <input type="file" id="dp_pan_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Date of Birth *</label>
+                        <input type="date" id="date_of_birth_input" name="date_of_birth" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhar Number *</label>
+                        <input type="text" id="aadhar_number_input" name="aadhar_number" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhaar Front Upload</label>
+                        <input type="file" id="aadhar_front_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhaar Back Upload </label>
+                        <input type="file" id="aadhar_back_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Start Date</label>
-                        <input type="date" name="training_start_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Education Certificate </label>
+                        <input type="file" id="education_certificate_input" accept=".pdf, .jpg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Bank Name *</label>
+                        <input type="text" id="bank_name_input" name="bank_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training End Date</label>
-                        <input type="date" name="training_end_date" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Account Number *</label>
+                        <input type="text" id="account_number_input" name="account_number" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Trainings Status</label>
-                        <select name="trainings_status" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Completed">Completed</option>
-                            <option value="TC Pending">TC Pending</option>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IFSC Code *</label>
+                        <input type="text" id="ifsc_code_input" name="ifsc_code" placeholder="SBIN0001234" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+
+                    <!-- IIB Remarks MISP Dropdown -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Remarks MISP *</label>
+                        <select id="iib_remarks_misp_input" name="iib_remarks_misp" onchange="toggleSubsequentFields()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Matching Record Found In Database">Matching Record Found In Database</option>
+                            <option value="No Data Found In POS System">No Data Found In POS System</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Certificate Number</label>
-                        <input type="text" name="training_certificate_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Exam Status</label>
-                        <select name="exam_status" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Agreement Copy</label>
-                        <select name="agreement_copy" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <option value="Received">Received</option>
-                            <option value="Not Received">Not Received</option>
-                        </select>
+
+                    <!-- Container for all subsequent fields to be hidden/shown -->
+                    <div id="subsequentFieldsContainer" class="contents">
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Cancelled Cheque</label>
+                            <input type="file" id="cancelled_cheque_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Photograph</label>
+                            <input type="file" id="photograph_input" accept=".jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Registration Form *</label>
+                            <input type="text" id="misp_registration_form_input" name="misp_registration_form" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload *</label>
+                            <select id="iib_upload_input" name="iib_upload" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload Date *</label>
+                            <input type="date" id="iib_upload_date_input" name="iib_upload_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training ID/Password Shared *</label>
+                            <select id="training_id_password_shared_input" name="training_id_password_shared" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Start Date *</label>
+                            <input type="date" id="training_start_date_input" name="training_start_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training End Date *</label>
+                            <input type="date" id="training_end_date_input" name="training_end_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Trainings Status *</label>
+                            <select id="trainings_status_input" name="trainings_status" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="Completed">Completed</option>
+                                <option value="TC Pending">TC Pending</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Certificate Number</label>
+                            <input type="text" id="training_certificate_number_input" name="training_certificate_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Exam Status *</label>
+                            <select id="exam_status_input" name="exam_status" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Agreement Copy *</label>
+                            <select id="agreement_copy_input" name="agreement_copy" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="Received">Received</option>
+                                <option value="Not Received">Not Received</option>
+                            </select>
+                        </div>
                     </div>
 
                 </form>
@@ -371,15 +430,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = 'https://trywwodevwizligqsdhf.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyeXd3b2RldndpemxpZ3FzZGhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3ODkwNzMsImV4cCI6MjEwMDM2NTA3M30.H7QFlWAx3b02DrG3LNhVdb0jBjdu3JYoo7EhIP-HOMQ';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let associatesData = [];
+        let validAssociateNames = new Set();
+        let associatesMapping = {}; 
+        let stagedExcelData = [];
 
-        // Fetch Data from Supabase Database on Page Load
         async function fetchAssociates() {
             const { data, error } = await supabaseClient
                 .from('misp_associates')
@@ -393,6 +453,122 @@
 
             associatesData = data || [];
             renderTable(associatesData);
+        }
+
+        async function loadValidAssociateNames() {
+            const { data, error } = await supabaseClient
+                .from('associates')
+                .select('associate_name, associate_id');
+
+            if (error) {
+                console.error('Error fetching associates list:', error.message);
+                return;
+            }
+
+            const selectDropdown = document.getElementById('associate_name_select');
+            selectDropdown.innerHTML = '<option value="">Select Associate Name</option>';
+            validAssociateNames.clear();
+            associatesMapping = {};
+
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    if (item.associate_name) {
+                        const trimmedName = item.associate_name.trim();
+                        const assocId = item.associate_id ? String(item.associate_id).trim() : '';
+                        
+                        validAssociateNames.add(trimmedName.toLowerCase());
+                        associatesMapping[trimmedName.toLowerCase()] = assocId;
+
+                        const option = document.createElement('option');
+                        option.value = trimmedName;
+                        option.textContent = trimmedName;
+                        selectDropdown.appendChild(option);
+                    }
+                });
+            }
+        }
+
+        function onAssociateNameChange() {
+            const selectedName = document.getElementById('associate_name_select').value;
+            const associateIdInput = document.getElementById('associate_id');
+
+            if (selectedName) {
+                const lowerName = selectedName.trim().toLowerCase();
+                const matchedId = associatesMapping[lowerName] || '';
+                associateIdInput.value = matchedId;
+            } else {
+                associateIdInput.value = '';
+            }
+        }
+
+        // Toggle function to hide/show subsequent fields based on IIB Remarks MISP selection
+        function toggleSubsequentFields() {
+            const remarkValue = document.getElementById('iib_remarks_misp_input').value;
+            const container = document.getElementById('subsequentFieldsContainer');
+            const fields = container.querySelectorAll('input, select');
+
+            if (remarkValue === "Matching Record Found In Database") {
+                container.style.display = 'none';
+                fields.forEach(field => {
+                    field.removeAttribute('required');
+                });
+            } else {
+                container.style.display = 'contents';
+                fields.forEach(field => {
+                    // Re-apply required to fields that originally had it (except optional ones like file uploads or training cert number)
+                    if (field.id !== 'training_certificate_number_input' && field.type !== 'file') {
+                        field.setAttribute('required', 'required');
+                    }
+                });
+            }
+        }
+
+        function parseToIsoDate(value) {
+            if (!value) return null;
+            if (value instanceof Date) {
+                return value.toISOString().slice(0, 10);
+            }
+            const strVal = String(value).trim();
+            const ymdMatch = strVal.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+            if (ymdMatch) {
+                return `${ymdMatch[1]}-${ymdMatch[2].padStart(2, '0')}-${ymdMatch[3].padStart(2, '0')}`;
+            }
+            const dmyMatch = strVal.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (dmyMatch) {
+                const day = dmyMatch[1].padStart(2, '0');
+                const month = dmyMatch[2].padStart(2, '0');
+                const year = dmyMatch[3];
+                return `${year}-${month}-${day}`;
+            }
+            const parsed = Date.parse(strVal);
+            return isNaN(parsed) ? null : new Date(parsed).toISOString().slice(0, 10);
+        }
+
+        function formatDateForInput(value) {
+            if (!value) return '';
+            const strVal = String(value).trim();
+            const dmyMatch = strVal.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (dmyMatch) {
+                return `${dmyMatch[3]}-${dmyMatch[2].padStart(2, '0')}-${dmyMatch[1].padStart(2, '0')}`;
+            }
+            const ymdMatch = strVal.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+            if (ymdMatch) {
+                return `${ymdMatch[1]}-${ymdMatch[2].padStart(2, '0')}-${ymdMatch[3].padStart(2, '0')}`;
+            }
+            return '';
+        }
+
+        function formatDateToDDMMYYYY(value) {
+            if (!value) return '-';
+            const strVal = String(value).trim();
+            const ymdMatch = strVal.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+            if (ymdMatch) {
+                const year = ymdMatch[1];
+                const month = ymdMatch[2].padStart(2, '0');
+                const day = ymdMatch[3].padStart(2, '0');
+                return `${day}/${month}/${year}`;
+            }
+            return strVal;
         }
 
         const locationData = {
@@ -429,8 +605,9 @@
         const allowedAssociateFields = new Set([
             'associate_name', 'associate_id', 'type', 'misp_id', 'onboarding_date', 'misp_name', 'misp_pan',
             'address', 'state', 'city', 'pin_code', 'gst_no', 'oem_name', 'document_recv_date', 'dp_name',
-            'dp_contact', 'dp_email', 'dp_pan_no', 'date_of_birth', 'aadhar_number', 'tenth_twelfth_certificate',
-            'bank_name', 'account_number', 'ifsc_code', 'iib_remarks_misp', 'cancelled_cheque', 'photograph',
+            'dp_contact', 'dp_email', 'dp_pan_no', 'dp_pan_upload', 'date_of_birth', 'aadhar_number',
+            'aadhar_front_upload', 'aadhar_back_upload', 'tenth_twelfth_certificate', 'bank_name', 'account_number',
+            'ifsc_code', 'iib_remarks_misp', 'cancelled_cheque', 'photograph',
             'misp_registration_form', 'iib_upload', 'iib_upload_date', 'training_id_password_shared',
             'training_start_date', 'training_end_date', 'trainings_status', 'training_certificate_number',
             'exam_status', 'agreement_copy'
@@ -442,19 +619,13 @@
         };
 
         function normalizeHeader(header) {
-            return header
-                .trim()
-                .toLowerCase()
-                .replace(/&/g, ' and ')
-                .replace(/[^a-z0-9]+/g, '_')
-                .replace(/^_+|_+$/g, '');
+            return header.trim().toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
         }
 
         function onStateChange() {
             const stateSelect = document.getElementById('stateSelect');
             const citySelect = document.getElementById('citySelect');
             const pinCodeInput = document.getElementById('pinCodeInput');
-            
             const selectedState = stateSelect.value;
             citySelect.innerHTML = '<option value="">Select City</option>';
             pinCodeInput.value = '';
@@ -463,7 +634,6 @@
                 citySelect.disabled = false;
                 citySelect.classList.remove('bg-gray-100');
                 citySelect.classList.add('bg-amber-50/50');
-
                 for (const city in locationData[selectedState]) {
                     const opt = document.createElement('option');
                     opt.value = city;
@@ -481,7 +651,6 @@
             const stateSelect = document.getElementById('stateSelect').value;
             const citySelect = document.getElementById('citySelect').value;
             const pinCodeInput = document.getElementById('pinCodeInput');
-
             if (stateSelect && locationData[stateSelect] && locationData[stateSelect][citySelect]) {
                 pinCodeInput.value = locationData[stateSelect][citySelect];
             } else {
@@ -490,63 +659,32 @@
         }
 
         async function getLatestMispId() {
-            const { data, error } = await supabaseClient
-                .from('misp_associates')
-                .select('misp_id')
-                .order('id', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (error) {
-                console.error('Error fetching latest MISP ID:', error);
-                return null;
-            }
-
+            const { data, error } = await supabaseClient.from('misp_associates').select('misp_id').order('id', { ascending: false }).limit(1).maybeSingle();
+            if (error) return null;
             return data?.misp_id || null;
         }
 
         function buildNextMispId(latestMispId) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const defaultPrefix = 'sib';
+            const defaultPrefix = 'MISP';
             const defaultSequence = '0001';
-
-            if (!latestMispId) {
-                return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
-            }
-
-            const match = latestMispId.match(/^(.*\/)(\d{4})\/(\d{2})\/(\d+)$/);
-            if (!match) {
-                return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
-            }
-
-            const prefix = match[1].replace(/\/$/, '');
-            const latestYear = match[2];
-            const latestMonth = match[3];
-            const latestSequence = parseInt(match[4], 10);
-            const nextSequence = String(latestSequence + 1).padStart(4, '0');
-
-            if (String(latestYear) === String(year) && latestMonth === month) {
-                return `${prefix}/${year}/${month}/${nextSequence}`;
-            }
-
-            return `${defaultPrefix}/${year}/${month}/${defaultSequence}`;
+            if (!latestMispId) return `${defaultPrefix}/${defaultSequence}`;
+            const match = latestMispId.match(/(\d+)$/);
+            if (!match) return `${defaultPrefix}/${defaultSequence}`;
+            const latestSequence = parseInt(match[1], 10);
+            if (isNaN(latestSequence)) return `${defaultPrefix}/${defaultSequence}`;
+            return `${defaultPrefix}/${String(latestSequence + 1).padStart(4, '0')}`;
         }
 
         async function fillNextMispId() {
             const nextId = buildNextMispId(await getLatestMispId());
             const mispIdInput = document.getElementById('mispIdInput');
-            if (mispIdInput) {
-                mispIdInput.value = nextId;
-            }
+            if (mispIdInput) mispIdInput.value = nextId;
         }
 
         function renderTable(data) {
             const tableBody = document.getElementById('table-body');
             const recordCount = document.getElementById('recordCount');
             tableBody.innerHTML = '';
-
             recordCount.innerText = `Showing ${data.length} record(s)`;
 
             if (data.length === 0) {
@@ -557,13 +695,12 @@
             data.forEach((row, index) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-blue-50/50 transition-colors';
-                
                 tr.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap font-semibold text-gray-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${row.associate_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.associate_id || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap"><span class="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-md text-xs uppercase font-medium">${row.type || '-'}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.misp_id || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.onboarding_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.onboarding_date)}</td>
                     <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.misp_name}">${row.misp_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.misp_pan || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.address}">${row.address || '-'}</td>
@@ -572,32 +709,33 @@
                     <td class="px-4 py-3 whitespace-nowrap">${row.pin_code || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.gst_no || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.oem_name || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.document_recv_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.document_recv_date)}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.dp_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.dp_contact || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.dp_email || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.dp_pan_no || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.date_of_birth || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.date_of_birth)}</td>
                     <td class="px-4 py-3 whitespace-nowrap">[Aadhaar Redacted]</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.tenth_twelfth_certificate || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.tenth_twelfth_certificate ? `<a href="${row.tenth_twelfth_certificate}" target="_blank" class="text-blue-600 underline">View File</a>` : '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.bank_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.account_number || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.ifsc_code || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.iib_remarks_misp}">${row.iib_remarks_misp || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.cancelled_cheque || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.photograph || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.cancelled_cheque ? `<a href="${row.cancelled_cheque}" target="_blank" class="text-blue-600 underline">View File</a>` : '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${row.photograph ? `<a href="${row.photograph}" target="_blank" class="text-blue-600 underline">View File</a>` : '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.misp_registration_form || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.iib_upload || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.iib_upload_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.iib_upload_date)}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.training_id_password_shared || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.training_start_date || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${row.training_end_date || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.training_start_date)}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.training_end_date)}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.trainings_status || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.training_certificate_number || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.exam_status || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.agreement_copy || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-center">
                         <button onclick="viewDetails(${index})" class="text-indigo-600 hover:text-indigo-800 font-medium text-xs bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-md transition mr-1">View Full</button>
+                        <button onclick="editRow(${index})" class="text-amber-600 hover:text-amber-800 font-medium text-xs bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-md transition mr-1">Edit</button>
                         <button onclick="deleteRow(${index})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-md transition">Delete</button>
                     </td>
                 `;
@@ -605,13 +743,22 @@
             });
         }
 
-        // Modal Open/Close Controls
         async function openAddModal() {
+            document.getElementById('formModalTitle').innerText = "Add New MISP";
+            document.getElementById('editRecordId').value = "";
+            document.getElementById('stagedIndexInput').value = "";
+            document.getElementById('associateForm').reset();
+            document.getElementById('citySelect').disabled = true;
+            document.getElementById('citySelect').innerHTML = '<option value="">Select State First</option>';
+            document.getElementById('iib_remarks_misp_input').value = "Matching Record Found In Database";
+            toggleSubsequentFields();
+
             const modal = document.getElementById('addModal');
             if (modal) {
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             }
+            await loadValidAssociateNames();
             await fillNextMispId();
         }
 
@@ -623,89 +770,404 @@
             }
         }
 
-        // Save Form Data Directly to Supabase
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            if (modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function uploadFileAndGetUrl(inputElementId, folderName) {
+            const fileInput = document.getElementById(inputElementId);
+            if (!fileInput || fileInput.files.length === 0) return null;
+            const file = fileInput.files[0];
+            const fileName = `${folderName}_${Date.now()}_${file.name}`;
+            const { error: uploadError } = await supabaseClient.storage.from('associate_details').upload(fileName, file);
+            if (uploadError) return null;
+            const { data: urlData } = supabaseClient.storage.from('associate_details').getPublicUrl(fileName);
+            return urlData.publicUrl;
+        }
+
         async function submitForm() {
             const form = document.getElementById('associateForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const recordId = document.getElementById('editRecordId').value;
+            const stagedIndex = document.getElementById('stagedIndexInput').value;
             const formData = new FormData(form);
-            const newRecord = {};
+            const record = {};
 
             formData.forEach((value, key) => {
-                if (key === 'tenth_twelfth_certificate' && value && value.name) {
-                    newRecord[key] = value.name; 
+                if (key === 'stagedIndex') return;
+                if (value === '') {
+                    record[key] = null;
                 } else {
-                    if ((key.includes('date') || key === 'date_of_birth') && value === '') {
-                        newRecord[key] = null;
+                    if (['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(key)) {
+                        record[key] = value.trim().toUpperCase();
+                    } else if (key.includes('date') || key === 'date_of_birth') {
+                        record[key] = parseToIsoDate(value);
                     } else {
-                        // Uppercase formatting for PAN, GST, and IFSC fields
-                        if (['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(key) && value) {
-                            newRecord[key] = value.trim().toUpperCase();
-                        } else {
-                            newRecord[key] = value;
-                        }
+                        record[key] = value;
                     }
                 }
             });
 
-            newRecord.type = "misp";
-
-            if (!newRecord.associate_name) {
-                alert("Please enter Associate Name");
+            if (!record.associate_name || !validAssociateNames.has(record.associate_name.trim().toLowerCase())) {
+                alert('Validation Error: Selected Associate Name does not exist in the master associates table.');
                 return;
             }
 
-            let result;
-            const hasMispId = newRecord.misp_id && String(newRecord.misp_id).trim() !== '';
+            const assocIdVal = document.getElementById('associate_id').value;
+            record.associate_id = assocIdVal ? assocIdVal.trim() : null;
+            record.type = "MISP";
 
-            if (hasMispId) {
-                const { data: existingRow, error: fetchError } = await supabaseClient
+            const panUrl = await uploadFileAndGetUrl('dp_pan_upload_input', 'pan');
+            if (panUrl) record.dp_pan_upload = panUrl;
+            const frontUrl = await uploadFileAndGetUrl('aadhar_front_upload_input', 'aadhar_front');
+            if (frontUrl) record.aadhar_front_upload = frontUrl;
+            const backUrl = await uploadFileAndGetUrl('aadhar_back_upload_input', 'aadhar_back');
+            if (backUrl) record.aadhar_back_upload = backUrl;
+            const eduUrl = await uploadFileAndGetUrl('education_certificate_input', 'edu_cert');
+            if (eduUrl) record.tenth_twelfth_certificate = eduUrl;
+            const chequeUrl = await uploadFileAndGetUrl('cancelled_cheque_input', 'cheque');
+            if (chequeUrl) record.cancelled_cheque = chequeUrl;
+            const photoUrl = await uploadFileAndGetUrl('photograph_input', 'photo');
+            if (photoUrl) record.photograph = photoUrl;
+
+            // Agar "Matching Record Found In Database" selected hai, toh subsequent fields ko null/clear kar dein
+            if (record.iib_remarks_misp === "Matching Record Found In Database") {
+                record.cancelled_cheque = null;
+                record.photograph = null;
+                record.misp_registration_form = null;
+                record.iib_upload = null;
+                record.iib_upload_date = null;
+                record.training_id_password_shared = null;
+                record.training_start_date = null;
+                record.training_end_date = null;
+                record.trainings_status = null;
+                record.training_certificate_number = null;
+                record.exam_status = null;
+                record.agreement_copy = null;
+            }
+
+            if (stagedIndex !== "") {
+                const idx = parseInt(stagedIndex, 10);
+                let rowErrors = [];
+                if (!record.associate_name || !validAssociateNames.has(record.associate_name.trim().toLowerCase())) {
+                    rowErrors.push("Name not found in associates table");
+                }
+                if (record.misp_pan) {
+                    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+                    if (!panRegex.test(record.misp_pan)) rowErrors.push("Invalid PAN");
+                }
+
+                record._errors = rowErrors;
+                record._isValid = rowErrors.length === 0;
+                stagedExcelData[idx] = record;
+
+                closeAddModal();
+                recomputeAndRenderPreview();
+                openPreviewModal();
+                return;
+            }
+
+            if (recordId !== "") {
+                const { error } = await supabaseClient
                     .from('misp_associates')
-                    .select('id')
-                    .eq('misp_id', newRecord.misp_id)
-                    .maybeSingle();
+                    .update(record)
+                    .eq('id', recordId);
 
-                if (fetchError) {
-                    console.error('Error checking existing MISP ID:', fetchError);
-                    alert('Error saving associate: ' + fetchError.message);
+                if (error) {
+                    alert('Error updating record: ' + error.message);
                     return;
                 }
 
-                if (existingRow && existingRow.id) {
-                    result = await supabaseClient
-                        .from('misp_associates')
-                        .update(newRecord)
-                        .eq('misp_id', newRecord.misp_id)
-                        .select();
-                } else {
-                    result = await supabaseClient
-                        .from('misp_associates')
-                        .insert([newRecord])
-                        .select();
-                }
+                alert('MISP record successfully updated!');
             } else {
-                result = await supabaseClient
-                    .from('misp_associates')
-                    .insert([newRecord])
-                    .select();
+                const { error } = await supabaseClient.from('misp_associates').insert([record]).select();
+                if (error) {
+                    alert('Error saving record: ' + error.message);
+                    return;
+                }
+
+                alert('MISP successfully saved to database!');
             }
 
-            const { data, error } = result;
-            if (error) {
-                console.error('Error saving record:', error);
-                if (error.message && error.message.includes('duplicate key value violates unique constraint')) {
-                    alert('Error saving associate: This unique field already exists. Please check MISP ID, Associate ID, Contact, or Email.');
-                } else {
-                    alert('Error saving associate: ' + error.message);
+            form.reset();
+            closeAddModal();
+            fetchAssociates();
+        }
+
+        async function editRow(index) {
+            const row = associatesData[index];
+            if (!row) return;
+
+            await loadValidAssociateNames();
+            document.getElementById('formModalTitle').innerText = `Edit MISP: ${row.associate_name || ''}`;
+            document.getElementById('editRecordId').value = row.id;
+            document.getElementById('stagedIndexInput').value = "";
+
+            document.getElementById('associate_name_select').value = row.associate_name || '';
+            onAssociateNameChange();
+            document.getElementById('mispIdInput').value = row.misp_id || '';
+            document.getElementById('onboarding_date_input').value = formatDateForInput(row.onboarding_date);
+            document.getElementById('misp_name_input').value = row.misp_name || '';
+            document.getElementById('misp_pan_input').value = row.misp_pan || '';
+            document.getElementById('address_input').value = row.address || '';
+            document.getElementById('stateSelect').value = row.state || '';
+            onStateChange();
+            document.getElementById('citySelect').value = row.city || '';
+            document.getElementById('pinCodeInput').value = row.pin_code || '';
+            document.getElementById('gst_no_input').value = row.gst_no || '';
+            document.getElementById('oem_name_input').value = row.oem_name || '';
+            document.getElementById('document_recv_date_input').value = formatDateForInput(row.document_recv_date);
+            document.getElementById('dp_name_input').value = row.dp_name || '';
+            document.getElementById('dp_contact_input').value = row.dp_contact || '';
+            document.getElementById('dp_email_input').value = row.dp_email || '';
+            document.getElementById('dp_pan_no_input').value = row.dp_pan_no || '';
+            document.getElementById('date_of_birth_input').value = formatDateForInput(row.date_of_birth);
+            document.getElementById('aadhar_number_input').value = row.aadhar_number || '';
+            document.getElementById('bank_name_input').value = row.bank_name || '';
+            document.getElementById('account_number_input').value = row.account_number || '';
+            document.getElementById('ifsc_code_input').value = row.ifsc_code || '';
+            
+            document.getElementById('iib_remarks_misp_input').value = row.iib_remarks_misp || 'Matching Record Found In Database';
+            toggleSubsequentFields();
+
+            document.getElementById('iib_upload_input').value = row.iib_upload || 'Yes';
+            document.getElementById('iib_upload_date_input').value = formatDateForInput(row.iib_upload_date);
+            document.getElementById('training_id_password_shared_input').value = row.training_id_password_shared || 'Yes';
+            document.getElementById('training_start_date_input').value = formatDateForInput(row.training_start_date);
+            document.getElementById('training_end_date_input').value = formatDateForInput(row.training_end_date);
+            document.getElementById('trainings_status_input').value = row.trainings_status || 'Completed';
+            document.getElementById('training_certificate_number_input').value = row.training_certificate_number || '';
+            document.getElementById('exam_status_input').value = row.exam_status || 'Yes';
+            document.getElementById('agreement_copy_input').value = row.agreement_copy || 'Received';
+
+            const modal = document.getElementById('addModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        async function handleExcelImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            await loadValidAssociateNames();
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    const workbookData = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(workbookData, { type: 'array', cellDates: true });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
+
+                    if (rawJsonData.length === 0) {
+                        alert("Excel file is empty!");
+                        return;
+                    }
+
+                    stagedExcelData = [];
+
+                    rawJsonData.forEach((row) => {
+                        const newRow = {};
+                        let rowErrors = [];
+
+                        allowedAssociateFields.forEach(field => { newRow[field] = null; });
+
+                        for (let header in row) {
+                            const normalizedHeader = normalizeHeader(header);
+                            const targetKey = headerKeyMap[normalizedHeader] || normalizedHeader;
+                            if (!allowedAssociateFields.has(targetKey)) continue;
+
+                            let value = row[header];
+                            if (value === '') value = null;
+
+                            if (value !== null && (targetKey.includes('date') || targetKey === 'date_of_birth')) {
+                                value = parseToIsoDate(value);
+                            }
+
+                            if (value !== null && ['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(targetKey)) {
+                                value = String(value).trim().toUpperCase();
+                            }
+
+                            newRow[targetKey] = value;
+                        }
+
+                        newRow.type = 'MISP';
+
+                        if (!newRow.associate_name) {
+                            rowErrors.push("Missing Name");
+                        } else {
+                            const trimmedName = newRow.associate_name.trim().toLowerCase();
+                            if (!validAssociateNames.has(trimmedName)) {
+                                rowErrors.push("Name not found in associates table");
+                            } else if (!newRow.associate_id) {
+                                newRow.associate_id = associatesMapping[trimmedName] || null;
+                            }
+                        }
+
+                        if (newRow.misp_pan) {
+                            const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+                            if (!panRegex.test(newRow.misp_pan)) rowErrors.push("Invalid PAN");
+                        }
+
+                        newRow._errors = rowErrors;
+                        newRow._isValid = rowErrors.length === 0;
+
+                        stagedExcelData.push(newRow);
+                    });
+
+                    recomputeAndRenderPreview();
+                    event.target.value = '';
+
+                } catch (err) {
+                    console.error('Excel parsing error:', err);
+                    alert('Failed to read Excel file. Please check format.');
                 }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function openPreviewModal() {
+            const previewModal = document.getElementById('previewModal');
+            previewModal.classList.remove('hidden');
+            previewModal.classList.add('flex');
+        }
+
+        function recomputeAndRenderPreview() {
+            let errorCount = 0;
+            stagedExcelData.forEach(r => { if (!r._isValid) errorCount++; });
+
+            const previewBody = document.getElementById('preview-table-body');
+            const previewSummary = document.getElementById('previewSummary');
+            const confirmBtn = document.getElementById('confirmImportBtn');
+
+            previewBody.innerHTML = '';
+            previewSummary.innerHTML = `Total Rows: <span class="text-blue-600">${stagedExcelData.length}</span> | Valid Rows: <span class="text-emerald-600">${stagedExcelData.length - errorCount}</span> | Rows with Conflicts: <span class="text-red-600">${errorCount}</span>`;
+
+            if (errorCount > 0) {
+                confirmBtn.innerText = `Import Valid Rows Only (${stagedExcelData.length - errorCount})`;
+                confirmBtn.className = "px-5 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition";
+            } else {
+                confirmBtn.innerText = `Confirm & Import All (${stagedExcelData.length})`;
+                confirmBtn.className = "px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition";
+            }
+
+            stagedExcelData.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                const statusBadge = row._isValid 
+                    ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold">Ready</span>` 
+                    : `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded text-[11px] font-bold">${row._errors.join(', ')}</span>`;
+
+                tr.className = row._isValid ? 'hover:bg-gray-50' : 'bg-red-50/50 hover:bg-red-50';
+                tr.innerHTML = `
+                    <td class="px-3 py-2 font-medium">${idx + 1}</td>
+                    <td class="px-3 py-2">${row.associate_name || '-'}</td>
+                    <td class="px-3 py-2">${row.associate_id || '-'}</td>
+                    <td class="px-3 py-2">${row.misp_id || '-'}</td>
+                    <td class="px-3 py-2">${formatDateToDDMMYYYY(row.onboarding_date)}</td>
+                    <td class="px-3 py-2">${statusBadge}</td>
+                    <td class="px-3 py-2 text-center flex items-center justify-center gap-1.5">
+                        <button onclick="editStagedRow(${idx})" class="text-indigo-600 hover:text-indigo-800 font-medium text-xs bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded transition">Edit</button>
+                        <button onclick="deleteStagedRow(${idx})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2 py-1 rounded transition">Delete</button>
+                    </td>
+                `;
+                previewBody.appendChild(tr);
+            });
+
+            openPreviewModal();
+        }
+
+        async function editStagedRow(idx) {
+            const row = stagedExcelData[idx];
+            closePreviewModal();
+
+            await loadValidAssociateNames();
+            document.getElementById('formModalTitle').innerText = `Edit Staged Row #${idx + 1}`;
+            document.getElementById('editRecordId').value = "";
+            document.getElementById('stagedIndexInput').value = idx;
+
+            document.getElementById('associate_name_select').value = row.associate_name || '';
+            onAssociateNameChange(); 
+            document.getElementById('mispIdInput').value = row.misp_id || '';
+            document.getElementById('onboarding_date_input').value = formatDateForInput(row.onboarding_date);
+            document.getElementById('misp_name_input').value = row.misp_name || '';
+            document.getElementById('misp_pan_input').value = row.misp_pan || '';
+            document.getElementById('address_input').value = row.address || '';
+            document.getElementById('stateSelect').value = row.state || '';
+            onStateChange();
+            document.getElementById('citySelect').value = row.city || '';
+            document.getElementById('pinCodeInput').value = row.pin_code || '';
+            document.getElementById('gst_no_input').value = row.gst_no || '';
+            document.getElementById('oem_name_input').value = row.oem_name || '';
+            document.getElementById('document_recv_date_input').value = formatDateForInput(row.document_recv_date);
+            document.getElementById('dp_name_input').value = row.dp_name || '';
+            document.getElementById('dp_contact_input').value = row.dp_contact || '';
+            document.getElementById('dp_email_input').value = row.dp_email || '';
+            document.getElementById('dp_pan_no_input').value = row.dp_pan_no || '';
+            document.getElementById('date_of_birth_input').value = formatDateForInput(row.date_of_birth);
+            document.getElementById('aadhar_number_input').value = row.aadhar_number || '';
+            document.getElementById('bank_name_input').value = row.bank_name || '';
+            document.getElementById('account_number_input').value = row.account_number || '';
+            document.getElementById('ifsc_code_input').value = row.ifsc_code || '';
+            
+            document.getElementById('iib_remarks_misp_input').value = row.iib_remarks_misp || 'Matching Record Found In Database';
+            toggleSubsequentFields();
+
+            document.getElementById('iib_upload_input').value = row.iib_upload || 'Yes';
+            document.getElementById('iib_upload_date_input').value = formatDateForInput(row.iib_upload_date);
+            document.getElementById('training_id_password_shared_input').value = row.training_id_password_shared || 'Yes';
+            document.getElementById('training_start_date_input').value = formatDateForInput(row.training_start_date);
+            document.getElementById('training_end_date_input').value = formatDateForInput(row.training_end_date);
+            document.getElementById('trainings_status_input').value = row.trainings_status || 'Completed';
+            document.getElementById('training_certificate_number_input').value = row.training_certificate_number || '';
+            document.getElementById('exam_status_input').value = row.exam_status || 'Yes';
+            document.getElementById('agreement_copy_input').value = row.agreement_copy || 'Received';
+
+            const modal = document.getElementById('addModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function deleteStagedRow(idx) {
+            if (confirm(`Are you sure you want to remove row #${idx + 1} from staging?`)) {
+                stagedExcelData.splice(idx, 1);
+                recomputeAndRenderPreview();
+                if (stagedExcelData.length === 0) {
+                    closePreviewModal();
+                }
+            }
+        }
+
+        async function confirmAndImportData() {
+            const validRowsToImport = stagedExcelData.filter(r => r._isValid);
+            if (validRowsToImport.length === 0) {
+                alert("No valid rows available to import!");
                 return;
             }
 
-            alert('Associate successfully saved to database!');
-            form.reset();
-            
-            document.getElementById('citySelect').disabled = true;
-            document.getElementById('citySelect').innerHTML = '<option value="">Select State First</option>';
-            
-            closeAddModal();
+            const cleanData = validRowsToImport.map(({ _errors, _isValid, ...rest }) => rest);
+
+            const { error } = await supabaseClient
+                .from('misp_associates')
+                .upsert(cleanData, { onConflict: 'associate_id' })
+                .select();
+
+            if (error) {
+                alert('Import failed: ' + error.message);
+                return;
+            }
+
+            alert(`Successfully imported ${cleanData.length} valid records into Supabase!`);
+            closePreviewModal();
             fetchAssociates();
         }
 
@@ -718,10 +1180,17 @@
             for (const [key, value] of Object.entries(row)) {
                 if (key === 'id' || key === 'created_at') continue;
                 const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+                let displayVal = value || '-';
+                if ((key.includes('date') || key === 'date_of_birth') && value) {
+                    displayVal = formatDateToDDMMYYYY(value);
+                }
+                if (['tenth_twelfth_certificate', 'cancelled_cheque', 'photograph', 'dp_pan_upload', 'aadhar_front_upload', 'aadhar_back_upload'].includes(key) && value) {
+                    displayVal = `<a href="${value}" target="_blank" class="text-blue-600 underline">Open File</a>`;
+                }
                 modalContent.innerHTML += `
                     <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
                         <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide">${formattedKey}</span>
-                        <span class="text-sm font-medium text-gray-800 mt-0.5 block break-words">${value || '-'}</span>
+                        <span class="text-sm font-medium text-gray-800 mt-0.5 block break-words">${displayVal}</span>
                     </div>
                 `;
             }
@@ -738,9 +1207,7 @@
         function filterTable() {
             const query = document.getElementById('searchBox').value.toLowerCase();
             const filteredData = associatesData.filter(row => {
-                return Object.values(row).some(val => 
-                    String(val).toLowerCase().includes(query)
-                );
+                return Object.values(row).some(val => String(val).toLowerCase().includes(query));
             });
             renderTable(filteredData);
         }
@@ -748,121 +1215,21 @@
         async function deleteRow(index) {
             const row = associatesData[index];
             if (!row || !row.id) return;
-
             if (!confirm(`Are you sure you want to delete ${row.associate_name}?`)) return;
 
-            const { error } = await supabaseClient
-                .from('misp_associates')
-                .delete()
-                .eq('id', row.id);
-
+            const { error } = await supabaseClient.from('misp_associates').delete().eq('id', row.id);
             if (error) {
-                console.error('Error deleting record:', error);
                 alert('Failed to delete record.');
                 return;
             }
-
             fetchAssociates();
         }
 
-        // Excel Import and Automatic Upsert Sync Feature
-        async function handleExcelImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function (e) {
-                try {
-                    const workbookData = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(workbookData, { type: 'array', cellDates: true });
-                    
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
-
-                    if (rawJsonData.length === 0) {
-                        alert("Excel file is empty!");
-                        return;
-                    }
-
-                    function formatDateValue(value) {
-                        if (value === null || value === undefined || value === '') {
-                            return null;
-                        }
-                        if (value instanceof Date) {
-                            return value.toISOString().slice(0, 10);
-                        }
-                        if (typeof value === 'number') {
-                            const parsed = XLSX.SSF.parse_date_code(value);
-                            if (!parsed) return null;
-                            return `${parsed.y}-${String(parsed.m).padStart(2, '0')}-${String(parsed.d).padStart(2, '0')}`;
-                        }
-                        const normalized = String(value).trim();
-                        const parsedTime = Date.parse(normalized);
-                        return isNaN(parsedTime) ? null : new Date(parsedTime).toISOString().slice(0, 10);
-                    }
-
-                    const formattedData = rawJsonData.map(row => {
-                        const newRow = {};
-
-                        allowedAssociateFields.forEach(field => {
-                            newRow[field] = null;
-                        });
-
-                        for (let header in row) {
-                            const normalizedHeader = normalizeHeader(header);
-                            const targetKey = headerKeyMap[normalizedHeader] || normalizedHeader;
-                            if (!allowedAssociateFields.has(targetKey)) {
-                                continue;
-                            }
-
-                            let value = row[header];
-                            if (value === '') {
-                                value = null;
-                            }
-
-                            if (value !== null && (targetKey.includes('date') || targetKey === 'date_of_birth')) {
-                                value = formatDateValue(value);
-                            }
-
-                            if (value !== null && ['misp_pan', 'dp_pan_no', 'gst_no', 'ifsc_code'].includes(targetKey)) {
-                                value = String(value).trim().toUpperCase();
-                            }
-
-                            newRow[targetKey] = value;
-                        }
-
-                        newRow.type = 'misp';
-                        return newRow;
-                    });
-
-                    // Upsert operation based on associate_id
-                    const { data, error } = await supabaseClient
-                        .from('misp_associates')
-                        .upsert(formattedData, { onConflict: 'associate_id' })
-                        .select();
-
-                    if (error) {
-                        console.error('Error importing Excel data:', error);
-                        alert('Import failed: ' + error.message);
-                        return;
-                    }
-
-                    alert(`Successfully imported and synced ${formattedData.length} records!`);
-                    fetchAssociates();
-                    event.target.value = '';
-
-                } catch (err) {
-                    console.error('Excel parsing error:', err);
-                    alert('Failed to read Excel file. Please check the file format.');
-                }
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-
-        // Initial Data Load from Supabase on Startup
+        // Initial startup
         fetchAssociates();
+        loadValidAssociateNames();
+        // Run once on load to set initial visibility
+        toggleSubsequentFields();
     </script>
 </body>
 </html>
