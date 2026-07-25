@@ -35,6 +35,28 @@
             outline: none;
             box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
         }
+
+        /* Custom Scrollbar Styles Matching Reference Image */
+        ::-webkit-scrollbar {
+            height: 8px; /* Height of horizontal scrollbar */
+            width: 8px;  /* Width of vertical scrollbar */
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #b8b3e9; /* Light purple/indigo accent color */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9d95df; /* Slightly darker shade on hover */
+        }
+        /* For Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #b8b3e9 #f1f1f1;
+        }
     </style>
     <link rel="icon" type="image/jpeg" href="./logomisp.jpeg">
 </head>
@@ -52,7 +74,8 @@
                     <span>Import Excel</span>
                     <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelImport(event)">
                 </label>
-                <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-2">
+                <!-- Add New MISP Button styled with Light Purple / Indigo Accent -->
+                <button onclick="openAddModal()" style="background-color: #8178df;" class="hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-2">
                     <span>+ Add New MISP</span>
                 </button>
             </div>
@@ -365,7 +388,7 @@
             <option value="Nainital Bank">Nainital Bank</option>
                 </optgroup>
                </select>
-                   </div>
+                    </div>
   
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Account Number *</label>
