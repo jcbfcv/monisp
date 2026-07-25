@@ -17,7 +17,8 @@
             z-index: 10;
         }
         thead .sticky-col {
-            background-color: #f1f5f9 !important;
+            background-color: #0b3c65 !important;
+            color: #ffffff !important;
             z-index: 20;
         }
         /* Custom Neutral Input Styles */
@@ -35,6 +36,7 @@
             box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
         }
     </style>
+    <link rel="icon" type="image/jpeg" href="./logomisp.jpeg">
 </head>
 <body class="bg-slate-100 p-6 font-sans">
 
@@ -76,9 +78,9 @@
         <!-- Table Container -->
         <div class="overflow-x-auto border border-slate-200 shadow-md rounded-xl bg-white">
             <table class="min-w-full divide-y divide-slate-200 text-sm text-left border-collapse">
-                <thead class="bg-slate-100 text-slate-700 uppercase font-semibold text-xs tracking-wider">
+                <thead style="background-color: #0b3c65;" class="text-white uppercase font-semibold text-xs tracking-wider">
                     <tr>
-                        <th class="px-4 py-3.5 whitespace-nowrap sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Associate Name</th>
+                        <th class="px-4 py-3.5 whitespace-nowrap sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]" style="background-color: #0b3c65; color: #ffffff;">Associate Name</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">Associate ID</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">Type</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">MISP ID</th>
@@ -138,7 +140,7 @@
                 <div id="previewSummary" class="mb-4 text-sm font-semibold"></div>
                 <div class="overflow-x-auto border border-slate-200 rounded-lg">
                     <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
-                        <thead class="bg-slate-100 uppercase font-semibold text-slate-700">
+                        <thead style="background-color: #0b3c65;" class="text-white uppercase font-semibold">
                             <tr>
                                 <th class="px-3 py-2.5">Row #</th>
                                 <th class="px-3 py-2.5">Associate Name</th>
@@ -302,7 +304,7 @@
                         <input type="date" id="date_of_birth_input" name="date_of_birth" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Aadhar Number *</label>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Aadhaar Number *</label>
                         <input type="text" id="aadhar_number_input" name="aadhar_number" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
@@ -320,9 +322,51 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Bank Name *</label>
-                        <input type="text" id="bank_name_input" name="bank_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-                    </div>
+                          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Bank Name *</label>
+                          <select id="bank_name_input" name="bank_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+                          <option value="" disabled selected>Select Bank Name</option>
+      
+                          <optgroup label="Public Sector Banks">
+                          <option value="State Bank of India">State Bank of India (SBI)</option>
+                          <option value="Bank of Baroda">Bank of Baroda</option>
+                          <option value="Punjab National Bank">Punjab National Bank</option>
+                          <option value="Canara Bank">Canara Bank</option>
+                          <option value="Union Bank of India">Union Bank of India</option>
+                          <option value="Bank of India">Bank of India</option>
+                          <option value="Indian Bank">Indian Bank</option>
+                          <option value="Central Bank of India">Central Bank of India</option>
+                          <option value="Indian Overseas Bank">Indian Overseas Bank</option>
+                          <option value="UCO Bank">UCO Bank</option>
+                          <option value="Bank of Maharashtra">Bank of Maharashtra</option>
+                          <option value="Punjab & Sind Bank">Punjab & Sind Bank</option>
+                                </optgroup>
+
+        <optgroup label="Private Sector Banks">
+            <option value="HDFC Bank">HDFC Bank</option>
+            <option value="ICICI Bank">ICICI Bank</option>
+            <option value="Axis Bank">Axis Bank</option>
+            <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+            <option value="IndusInd Bank">IndusInd Bank</option>
+            <option value="Yes Bank">Yes Bank</option>
+            <option value="IDFC FIRST Bank">IDFC FIRST Bank</option>
+            <option value="Federal Bank">Federal Bank</option>
+            <option value="RBL Bank">RBL Bank</option>
+            <option value="South Indian Bank">South Indian Bank</option>
+            <option value="Bandhan Bank">Bandhan Bank</option>
+            <option value="IDBI Bank">IDBI Bank</option>
+            <option value="City Union Bank">City Union Bank</option>
+            <option value="DCB Bank">DCB Bank</option>
+            <option value="Karnataka Bank">Karnataka Bank</option>
+            <option value="Karur Vysya Bank">Karur Vysya Bank</option>
+            <option value="Tamilnad Mercantile Bank">Tamilnad Mercantile Bank</option>
+            <option value="Jammu & Kashmir Bank">Jammu & Kashmir Bank</option>
+            <option value="Dhanlaxmi Bank">Dhanlaxmi Bank</option>
+            <option value="CSB Bank">CSB Bank</option>
+            <option value="Nainital Bank">Nainital Bank</option>
+                </optgroup>
+               </select>
+                   </div>
+  
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Account Number *</label>
                         <input type="text" id="account_number_input" name="account_number" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
@@ -729,7 +773,7 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50 transition-colors';
                 tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${row.associate_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]" style="background-color: #ffffff;">${row.associate_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.associate_id || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap"><span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md text-xs uppercase font-medium">${row.type || '-'}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.misp_id || '-'}</td>
