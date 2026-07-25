@@ -17,19 +17,33 @@
             z-index: 10;
         }
         thead .sticky-col {
-            background-color: #dbeafe !important;
+            background-color: #f1f5f9 !important;
             z-index: 20;
+        }
+        /* Custom Neutral Input Styles */
+        input[type="text"], 
+        input[type="date"], 
+        input[type="email"], 
+        input[type="tel"], 
+        select {
+            border: 1px solid #cbd5e1 !important;
+            background-color: #ffffff !important;
+        }
+        input:focus, select:focus {
+            border-color: #64748b !important;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
         }
     </style>
 </head>
-<body class="bg-gray-100 p-6 font-sans">
+<body class="bg-slate-100 p-6 font-sans">
 
     <div class="max-w-full mx-auto">
         <!-- Header Section -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 mt-1">MISP Onboarding Details</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Structured overview of MISP records and documentation status.</p>
+                <h1 class="text-2xl font-bold text-slate-800 mt-1">MISP Onboarding Details</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Structured overview of MISP records and documentation status.</p>
             </div>
             
             <div class="flex items-center gap-3">
@@ -44,26 +58,26 @@
         </div>
 
         <!-- Search & Count Bar -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4 mb-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 mb-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="w-full sm:w-1/3">
-                <label for="searchBox" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Find a Record</label>
+                <label for="searchBox" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Find a Record</label>
                 <input 
                     type="text" 
                     id="searchBox" 
                     onkeyup="filterTable()" 
                     placeholder="Search by name, ID, city, PAN..." 
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
             </div>
-            <div class="text-sm text-gray-500 font-medium" id="recordCount">
+            <div class="text-sm text-slate-500 font-medium" id="recordCount">
                 Showing all records
             </div>
         </div>
         
         <!-- Table Container -->
-        <div class="overflow-x-auto border border-gray-200 shadow-md rounded-xl bg-white">
-            <table class="min-w-full divide-y divide-gray-200 text-sm text-left border-collapse">
-                <thead class="bg-blue-100 text-gray-700 uppercase font-semibold text-xs tracking-wider">
+        <div class="overflow-x-auto border border-slate-200 shadow-md rounded-xl bg-white">
+            <table class="min-w-full divide-y divide-slate-200 text-sm text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-700 uppercase font-semibold text-xs tracking-wider">
                     <tr>
                         <th class="px-4 py-3.5 whitespace-nowrap sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Associate Name</th>
                         <th class="px-4 py-3.5 whitespace-nowrap">Associate ID</th>
@@ -105,7 +119,7 @@
                         <th class="px-4 py-3 whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="table-body" class="divide-y divide-gray-200 text-gray-700 bg-white"></tbody>
+                <tbody id="table-body" class="divide-y divide-slate-200 text-slate-700 bg-white"></tbody>
             </table>
         </div>
     </div>
@@ -113,19 +127,19 @@
     <!-- Excel Validation Preview Modal -->
     <div id="previewModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b px-6 py-4 bg-gray-50 rounded-t-2xl">
+            <div class="flex justify-between items-center border-b px-6 py-4 bg-slate-50 rounded-t-2xl">
                 <div>
-                    <h3 class="text-xl font-bold text-gray-800">Excel Data Staging & Validation Preview</h3>
-                    <p class="text-xs text-gray-500">Review validation conflicts, edit records, or delete invalid rows before importing.</p>
+                    <h3 class="text-xl font-bold text-slate-800">Excel Data Staging & Validation Preview</h3>
+                    <p class="text-xs text-slate-500">Review validation conflicts, edit records, or delete invalid rows before importing.</p>
                 </div>
-                <button onclick="closePreviewModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
             
             <div class="p-6 overflow-y-auto flex-1">
                 <div id="previewSummary" class="mb-4 text-sm font-semibold"></div>
-                <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200 text-xs text-left">
-                        <thead class="bg-gray-100 uppercase font-semibold text-gray-700">
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
+                        <thead class="bg-slate-100 uppercase font-semibold text-slate-700">
                             <tr>
                                 <th class="px-3 py-2.5">Row #</th>
                                 <th class="px-3 py-2.5">Associate Name</th>
@@ -136,13 +150,13 @@
                                 <th class="px-3 py-2.5 text-center">Staging Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="preview-table-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                        <tbody id="preview-table-body" class="divide-y divide-slate-200 bg-white"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-gray-50 rounded-b-2xl">
-                <button type="button" onclick="closePreviewModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">Cancel</button>
+            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
+                <button type="button" onclick="closePreviewModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-300 transition">Cancel</button>
                 <button type="button" id="confirmImportBtn" onclick="confirmAndImportData()" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition">Proceed & Import Valid Rows</button>
             </div>
         </div>
@@ -153,57 +167,57 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b px-6 py-4">
                 <div>
-                    <h3 class="text-xl font-bold text-gray-800" id="formModalTitle">Add New MISP</h3>
-                    <p class="text-xs text-gray-500">Fill out all required details below</p>
+                    <h3 class="text-xl font-bold text-slate-800" id="formModalTitle">Add New MISP</h3>
+                    <p class="text-xs text-slate-500">Fill out all required details below</p>
                 </div>
-                <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
             
-            <div class="p-6 overflow-y-auto flex-1 bg-amber-50/30">
+            <div class="p-6 overflow-y-auto flex-1 bg-slate-50/50">
                 <form id="associateForm" onsubmit="event.preventDefault(); submitForm();" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <input type="hidden" id="editRecordId" value="">
                     <input type="hidden" id="stagedIndexInput" value="">
                     
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate Name *</label>
-                        <select id="associate_name_select" name="associate_name" onchange="onAssociateNameChange()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Associate Name *</label>
+                        <select id="associate_name_select" name="associate_name" onchange="onAssociateNameChange()" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                             <option value="">Select Associate Name</option>
                         </select>
                     </div>
                    
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Associate ID *</label>
-                        <input type="text" id="associate_id" name="associate_id" readonly required class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-600 outline-none cursor-not-allowed">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Associate ID *</label>
+                        <input type="text" id="associate_id" name="associate_id" readonly required class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2 text-sm text-slate-600 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Type *</label>
-                        <input type="text" name="type" value="MISP" readonly class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 outline-none cursor-not-allowed">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Type *</label>
+                        <input type="text" name="type" value="MISP" readonly class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2 text-sm text-slate-500 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP ID *</label>
-                        <input id="mispIdInput" type="text" name="misp_id" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">MISP ID *</label>
+                        <input id="mispIdInput" type="text" name="misp_id" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Onboarding Date *</label>
-                        <input type="date" id="onboarding_date_input" name="onboarding_date" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Onboarding Date *</label>
+                        <input type="date" id="onboarding_date_input" name="onboarding_date" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Name *</label>
-                        <input type="text" id="misp_name_input" name="misp_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">MISP Name *</label>
+                        <input type="text" id="misp_name_input" name="misp_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP PAN *</label>
-                        <input type="text" id="misp_pan_input" name="misp_pan" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">MISP PAN *</label>
+                        <input type="text" id="misp_pan_input" name="misp_pan" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Address *</label>
-                        <input type="text" id="address_input" name="address" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Address *</label>
+                        <input type="text" id="address_input" name="address" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
 
                     <!-- State Dropdown -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">State *</label>
-                        <select id="stateSelect" name="state" onchange="onStateChange()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">State *</label>
+                        <select id="stateSelect" name="state" onchange="onStateChange()" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                             <option value="">Select State</option>
                             <option value="Andhra Pradesh">Andhra Pradesh</option>
                             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -238,25 +252,25 @@
 
                     <!-- City Dropdown -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">City *</label>
-                        <select id="citySelect" name="city" onchange="onCityChange()" required disabled class="w-full border border-amber-300 bg-gray-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">City *</label>
+                        <select id="citySelect" name="city" onchange="onCityChange()" required disabled class="w-full border border-slate-300 bg-slate-100 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                             <option value="">Select State First</option>
                         </select>
                     </div>
 
                     <!-- PIN Code -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">PIN Code *</label>
-                        <input type="text" id="pinCodeInput" name="pin_code" placeholder="Auto-filled" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-amber-500">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN Code *</label>
+                        <input type="text" id="pinCodeInput" name="pin_code" placeholder="Auto-filled" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-slate-400">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">GST No *</label>
-                        <input type="text" id="gst_no_input" name="gst_no" placeholder="22AAAAA0000A1Z5" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">GST No *</label>
+                        <input type="text" id="gst_no_input" name="gst_no" placeholder="22AAAAA0000A1Z5" style="text-transform: uppercase;" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">OEM Name *</label>
-                        <select id="oem_name_input" name="oem_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">OEM Name *</label>
+                        <select id="oem_name_input" name="oem_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                             <option value="">Select OEM</option>
                             <option value="Maruti Suzuki">Maruti Suzuki</option>
                             <option value="Tata Motors">Tata Motors</option>
@@ -266,68 +280,68 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Document Recv Date *</label>
-                        <input type="date" id="document_recv_date_input" name="document_recv_date" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Document Recv Date *</label>
+                        <input type="date" id="document_recv_date_input" name="document_recv_date" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Name *</label>
-                        <input type="text" id="dp_name_input" name="dp_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DP Name *</label>
+                        <input type="text" id="dp_name_input" name="dp_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Contact *</label>
-                        <input type="tel" id="dp_contact_input" name="dp_contact" placeholder="9876543210" maxlength="10" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DP Contact *</label>
+                        <input type="tel" id="dp_contact_input" name="dp_contact" placeholder="9876543210" maxlength="10" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP Email *</label>
-                        <input type="email" id="dp_email_input" name="dp_email" placeholder="example@domain.com" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DP Email *</label>
+                        <input type="email" id="dp_email_input" name="dp_email" placeholder="example@domain.com" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN No *</label>
-                        <input type="text" id="dp_pan_no_input" name="dp_pan_no" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DP PAN No *</label>
+                        <input type="text" id="dp_pan_no_input" name="dp_pan_no" placeholder="ABCDE1234F" style="text-transform: uppercase;" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">DP PAN Upload</label>
-                        <input type="file" id="dp_pan_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DP PAN Upload</label>
+                        <input type="file" id="dp_pan_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Date of Birth *</label>
-                        <input type="date" id="date_of_birth_input" name="date_of_birth" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Date of Birth *</label>
+                        <input type="date" id="date_of_birth_input" name="date_of_birth" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhar Number *</label>
-                        <input type="text" id="aadhar_number_input" name="aadhar_number" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Aadhar Number *</label>
+                        <input type="text" id="aadhar_number_input" name="aadhar_number" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhaar Front Upload</label>
-                        <input type="file" id="aadhar_front_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Aadhaar Front Upload</label>
+                        <input type="file" id="aadhar_front_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Aadhaar Back Upload </label>
-                        <input type="file" id="aadhar_back_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Education Certificate </label>
-                        <input type="file" id="education_certificate_input" accept=".pdf, .jpg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Aadhaar Back Upload </label>
+                        <input type="file" id="aadhar_back_upload_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Bank Name *</label>
-                        <input type="text" id="bank_name_input" name="bank_name" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Education Certificate </label>
+                        <input type="file" id="education_certificate_input" accept=".pdf, .jpg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Bank Name *</label>
+                        <input type="text" id="bank_name_input" name="bank_name" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Account Number *</label>
-                        <input type="text" id="account_number_input" name="account_number" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Account Number *</label>
+                        <input type="text" id="account_number_input" name="account_number" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IFSC Code *</label>
-                        <input type="text" id="ifsc_code_input" name="ifsc_code" placeholder="SBIN0001234" style="text-transform: uppercase;" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">IFSC Code *</label>
+                        <input type="text" id="ifsc_code_input" name="ifsc_code" placeholder="SBIN0001234" style="text-transform: uppercase;" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                     </div>
 
                     <!-- IIB Remarks MISP Dropdown -->
                     <div>
-                        <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Remarks MISP *</label>
-                        <select id="iib_remarks_misp_input" name="iib_remarks_misp" onchange="toggleSubsequentFields()" required class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">IIB Remarks MISP *</label>
+                        <select id="iib_remarks_misp_input" name="iib_remarks_misp" onchange="toggleSubsequentFields()" required class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                             <option value="Matching Record Found In Database">Matching Record Found In Database</option>
                             <option value="No Data Found In POS System">No Data Found In POS System</option>
                         </select>
@@ -336,66 +350,66 @@
                     <!-- Container for all subsequent fields to be hidden/shown -->
                     <div id="subsequentFieldsContainer" class="contents">
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Cancelled Cheque</label>
-                            <input type="file" id="cancelled_cheque_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Cancelled Cheque</label>
+                            <input type="file" id="cancelled_cheque_input" accept=".pdf, .jpg, .jpeg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Photograph</label>
-                            <input type="file" id="photograph_input" accept=".jpg, .jpeg, .png" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-1.5 text-xs text-gray-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Photograph</label>
+                            <input type="file" id="photograph_input" accept=".jpg, .jpeg, .png" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-1.5 text-xs text-slate-700 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-600 file:text-white hover:file:bg-slate-700">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">MISP Registration Form *</label>
-                            <input type="text" id="misp_registration_form_input" name="misp_registration_form" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">MISP Registration Form *</label>
+                            <input type="text" id="misp_registration_form_input" name="misp_registration_form" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload *</label>
-                            <select id="iib_upload_input" name="iib_upload" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">IIB Upload *</label>
+                            <select id="iib_upload_input" name="iib_upload" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                                 <option value="Yes">Yes</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">IIB Upload Date *</label>
-                            <input type="date" id="iib_upload_date_input" name="iib_upload_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">IIB Upload Date *</label>
+                            <input type="date" id="iib_upload_date_input" name="iib_upload_date" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training ID/Password Shared *</label>
-                            <select id="training_id_password_shared_input" name="training_id_password_shared" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Training ID/Password Shared *</label>
+                            <select id="training_id_password_shared_input" name="training_id_password_shared" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                                 <option value="Yes">Yes</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Start Date *</label>
-                            <input type="date" id="training_start_date_input" name="training_start_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Training Start Date *</label>
+                            <input type="date" id="training_start_date_input" name="training_start_date" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training End Date *</label>
-                            <input type="date" id="training_end_date_input" name="training_end_date" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Training End Date *</label>
+                            <input type="date" id="training_end_date_input" name="training_end_date" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Trainings Status *</label>
-                            <select id="trainings_status_input" name="trainings_status" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trainings Status *</label>
+                            <select id="trainings_status_input" name="trainings_status" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                                 <option value="Completed">Completed</option>
                                 <option value="TC Pending">TC Pending</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Training Certificate Number</label>
-                            <input type="text" id="training_certificate_number_input" name="training_certificate_number" class="w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Training Certificate Number</label>
+                            <input type="text" id="training_certificate_number_input" name="training_certificate_number" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Exam Status *</label>
-                            <select id="exam_status_input" name="exam_status" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Exam Status *</label>
+                            <select id="exam_status_input" name="exam_status" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                                 <option value="Yes">Yes</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 uppercase mb-1">Agreement Copy *</label>
-                            <select id="agreement_copy_input" name="agreement_copy" required class="subsequent-field w-full border border-amber-300 bg-amber-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Agreement Copy *</label>
+                            <select id="agreement_copy_input" name="agreement_copy" required class="subsequent-field w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-400 outline-none">
                                 <option value="Received">Received</option>
                                 <option value="Not Received">Not Received</option>
                             </select>
@@ -405,8 +419,8 @@
                 </form>
             </div>
 
-            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-gray-50 rounded-b-2xl">
-                <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">Cancel</button>
+            <div class="border-t px-6 py-4 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
+                <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-300 transition">Cancel</button>
                 <button type="button" onclick="submitForm()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Save Associate</button>
             </div>
         </div>
@@ -416,12 +430,12 @@
     <div id="detailModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
             <div class="flex justify-between items-center border-b pb-4 mb-4">
-                <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Associate Complete Details</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                <h3 class="text-xl font-bold text-slate-800" id="modalTitle">Associate Complete Details</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
             <div id="modalContent" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
             <div class="mt-6 flex justify-end">
-                <button onclick="closeModal()" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition">Close</button>
+                <button onclick="closeModal()" class="bg-slate-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-slate-900 transition">Close</button>
             </div>
         </div>
     </div>
@@ -501,7 +515,6 @@
             }
         }
 
-        // Toggle function to hide/show subsequent fields based on IIB Remarks MISP selection
         function toggleSubsequentFields() {
             const remarkValue = document.getElementById('iib_remarks_misp_input').value;
             const container = document.getElementById('subsequentFieldsContainer');
@@ -515,7 +528,6 @@
             } else {
                 container.style.display = 'contents';
                 fields.forEach(field => {
-                    // Re-apply required to fields that originally had it (except optional ones like file uploads or training cert number)
                     if (field.id !== 'training_certificate_number_input' && field.type !== 'file') {
                         field.setAttribute('required', 'required');
                     }
@@ -632,8 +644,8 @@
 
             if (selectedState && locationData[selectedState]) {
                 citySelect.disabled = false;
-                citySelect.classList.remove('bg-gray-100');
-                citySelect.classList.add('bg-amber-50/50');
+                citySelect.classList.remove('bg-slate-100');
+                citySelect.classList.add('bg-white');
                 for (const city in locationData[selectedState]) {
                     const opt = document.createElement('option');
                     opt.value = city;
@@ -642,8 +654,8 @@
                 }
             } else {
                 citySelect.disabled = true;
-                citySelect.classList.add('bg-gray-100');
-                citySelect.classList.remove('bg-amber-50/50');
+                citySelect.classList.add('bg-slate-100');
+                citySelect.classList.remove('bg-white');
             }
         }
 
@@ -688,17 +700,17 @@
             recordCount.innerText = `Showing ${data.length} record(s)`;
 
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="38" class="text-center py-8 text-gray-400 font-medium">No matching records found</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="38" class="text-center py-8 text-slate-400 font-medium">No matching records found</td></tr>`;
                 return;
             }
 
             data.forEach((row, index) => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-blue-50/50 transition-colors';
+                tr.className = 'hover:bg-slate-50 transition-colors';
                 tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap font-semibold text-gray-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${row.associate_name || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900 sticky-col shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${row.associate_name || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.associate_id || '-'}</td>
-                    <td class="px-4 py-3 whitespace-nowrap"><span class="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-md text-xs uppercase font-medium">${row.type || '-'}</span></td>
+                    <td class="px-4 py-3 whitespace-nowrap"><span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md text-xs uppercase font-medium">${row.type || '-'}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap">${row.misp_id || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${formatDateToDDMMYYYY(row.onboarding_date)}</td>
                     <td class="px-4 py-3 whitespace-nowrap max-w-xs truncate" title="${row.misp_name}">${row.misp_name || '-'}</td>
@@ -735,7 +747,7 @@
                     <td class="px-4 py-3 whitespace-nowrap">${row.agreement_copy || '-'}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-center">
                         <button onclick="viewDetails(${index})" class="text-indigo-600 hover:text-indigo-800 font-medium text-xs bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-md transition mr-1">View Full</button>
-                        <button onclick="editRow(${index})" class="text-amber-600 hover:text-amber-800 font-medium text-xs bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-md transition mr-1">Edit</button>
+                        <button onclick="editRow(${index})" class="text-slate-600 hover:text-slate-800 font-medium text-xs bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-md transition mr-1">Edit</button>
                         <button onclick="deleteRow(${index})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-md transition">Delete</button>
                     </td>
                 `;
@@ -839,7 +851,6 @@
             const photoUrl = await uploadFileAndGetUrl('photograph_input', 'photo');
             if (photoUrl) record.photograph = photoUrl;
 
-            // Agar "Matching Record Found In Database" selected hai, toh subsequent fields ko null/clear kar dein
             if (record.iib_remarks_misp === "Matching Record Found In Database") {
                 record.cancelled_cheque = null;
                 record.photograph = null;
@@ -1055,7 +1066,7 @@
 
             if (errorCount > 0) {
                 confirmBtn.innerText = `Import Valid Rows Only (${stagedExcelData.length - errorCount})`;
-                confirmBtn.className = "px-5 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition";
+                confirmBtn.className = "px-5 py-2 bg-slate-600 text-white rounded-lg text-sm font-semibold hover:bg-slate-700 transition";
             } else {
                 confirmBtn.innerText = `Confirm & Import All (${stagedExcelData.length})`;
                 confirmBtn.className = "px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition";
@@ -1067,7 +1078,7 @@
                     ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold">Ready</span>` 
                     : `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded text-[11px] font-bold">${row._errors.join(', ')}</span>`;
 
-                tr.className = row._isValid ? 'hover:bg-gray-50' : 'bg-red-50/50 hover:bg-red-50';
+                tr.className = row._isValid ? 'hover:bg-slate-50' : 'bg-red-50/50 hover:bg-red-50';
                 tr.innerHTML = `
                     <td class="px-3 py-2 font-medium">${idx + 1}</td>
                     <td class="px-3 py-2">${row.associate_name || '-'}</td>
@@ -1188,9 +1199,9 @@
                     displayVal = `<a href="${value}" target="_blank" class="text-blue-600 underline">Open File</a>`;
                 }
                 modalContent.innerHTML += `
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide">${formattedKey}</span>
-                        <span class="text-sm font-medium text-gray-800 mt-0.5 block break-words">${displayVal}</span>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">${formattedKey}</span>
+                        <span class="text-sm font-medium text-slate-800 mt-0.5 block break-words">${displayVal}</span>
                     </div>
                 `;
             }
@@ -1225,11 +1236,31 @@
             fetchAssociates();
         }
 
-        // Initial startup
         fetchAssociates();
         loadValidAssociateNames();
-        // Run once on load to set initial visibility
         toggleSubsequentFields();
+
+
+
+
+        function filterTable() {
+    const query = document.getElementById('searchBox').value.toLowerCase().trim();
+    
+    if (query === "") {
+        renderTable(associatesData);
+        return;
+    }
+
+    const filteredData = associatesData.filter(row => {
+        // Check across all properties of each record
+        return Object.values(row).some(val => {
+            if (val === null || val === undefined) return false;
+            return String(val).toLowerCase().includes(query);
+        });
+    });
+
+    renderTable(filteredData);
+}
     </script>
 </body>
 </html>
